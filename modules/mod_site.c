@@ -187,22 +187,50 @@ MODRET site_chgrp(cmd_rec *cmd) {
   return PR_HANDLED(cmd);
 }
 
-/** CBL DTD STATUS command */
+/** CBL DTD STATUS command 
+ * Return the status of the RMS and RD
+ * RMS status is 0x0000
+ * 
+ * RD status is a 32-bit value with the following format:
+ * 31-16: Storage status
+ *        [15:11] Reserved
+ *        [10]    Partition status not valid
+ *        [9:7]   Reserved
+ *        [6]     Format in process
+ *        [5]     Partition mount in process
+ *        [4:3]   Reserved
+ *        [2]     Erase in process 
+ * 15-0: Partition status
+ * 
+*/
 MODRET site_status(cmd_rec *cmd) {
-  pr_response_add(R_200, "0x%04x,0x%08x\r\n", 0x0000, 0x00001110);
+  u16_t RMS_status = 0x0000;
+  u16_t storage_status = 0x0000;
+  u16_t partition_status = 0x0000;
+
+  // check if a partition is mounted under /dtd/a/part1 with device /dev/sda1
+  if (pr_fsio_stat("/dtd/a/part1", NULL) == 0) {
+    storage_status |= 0x0000;
+    partition_status |= 0x1112;
+  }
+
+  u32_t RD_status = (storage_status << 16) | partition_status;
+
+  pr_response_add(R_200, "0x%04x,0x%08x\r\n", RMS_status, RD_status);
   return PR_HANDLED(cmd);
 }
 
+/** CBL GET TIME command */
 MODRET site_gettime(cmd_rec *cmd) {
   time_t now;
   struct tm *tm;
   char buf[64];
 
   now = time(NULL);
-  tm = localtime(&now);
-  strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", tm);
+  //tm = localtime(&now);
+  //strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", tm);
 
-  pr_response_add(R_200, "%s\r\n", buf);
+  pr_response_add(R_200, "%lu\r\n", now);
   return PR_HANDLED(cmd);
 }
 
