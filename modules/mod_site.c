@@ -41,7 +41,7 @@ static struct {
   { "HELP",	"[<sp> site-command]",			TRUE },
   { "CHGRP",	"<sp> group <sp> pathname",		TRUE },
   { "CHMOD",	"<sp> mode <sp> pathname",		TRUE },
-  { "CBL INFO", "<sp> Hello from CBL!", TRUE},
+  { "STATUS", "", TRUE},
   { NULL,	NULL,					FALSE }
 };
 
@@ -183,6 +183,12 @@ MODRET site_chgrp(cmd_rec *cmd) {
 
   pr_response_add(R_200, _("SITE %s command successful"),
     (char *) cmd->argv[0]);
+  return PR_HANDLED(cmd);
+}
+
+/** CBL DTD STATUS command */
+MODRET site_status(cmd_rec *cmd) {
+  pr_response_add(R_200, _("CBL DTD STATUS command successful"));
   return PR_HANDLED(cmd);
 }
 
@@ -533,6 +539,7 @@ static cmdtable site_commands[] = {
   { CMD, "HELP",	G_NONE,		site_help,	FALSE,	FALSE },
   { CMD, "CHGRP",	G_NONE,		site_chgrp,	TRUE,	FALSE },
   { CMD, "CHMOD",	G_NONE,		site_chmod,	TRUE,	FALSE },
+  { CMD, "STATUS",	G_NONE,		site_status,	TRUE,	FALSE },
   { 0, NULL }
 };
 
