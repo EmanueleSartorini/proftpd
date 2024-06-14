@@ -212,6 +212,9 @@ MODRET site_status(cmd_rec *cmd) {
   // check if a partition is mounted under /dtd/a/part1 with device /dev/sda1
   if (pr_fsio_stat("/dtd/a/part1", NULL) == 0) {
     storage_status |= 0x0000;
+    partition_status |= 0x1110;
+  }else{
+    storage_status |= 0x0000;
     partition_status |= 0x1112;
   }
 
