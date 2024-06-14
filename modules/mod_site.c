@@ -42,6 +42,7 @@ static struct {
   { "CHGRP",	"<sp> group <sp> pathname",		TRUE },
   { "CHMOD",	"<sp> mode <sp> pathname",		TRUE },
   { "STATUS", "", TRUE},
+  { "GETTIME", "", TRUE},
   { NULL,	NULL,					FALSE }
 };
 
@@ -189,6 +190,19 @@ MODRET site_chgrp(cmd_rec *cmd) {
 /** CBL DTD STATUS command */
 MODRET site_status(cmd_rec *cmd) {
   pr_response_add(R_200, "0x%04x,0x%08x\r\n", 0x0000, 0x00001110);
+  return PR_HANDLED(cmd);
+}
+
+MODRET site_gettime(cmd_rec *cmd) {
+  time_t now;
+  struct tm *tm;
+  char buf[64];
+
+  now = time(NULL);
+  tm = localtime(&now);
+  strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", tm);
+
+  pr_response_add(R_200, "%s\r\n", buf);
   return PR_HANDLED(cmd);
 }
 
@@ -540,6 +554,7 @@ static cmdtable site_commands[] = {
   { CMD, "CHGRP",	G_NONE,		site_chgrp,	TRUE,	FALSE },
   { CMD, "CHMOD",	G_NONE,		site_chmod,	TRUE,	FALSE },
   { CMD, "STATUS",	G_NONE,		site_status,	TRUE,	FALSE },
+  { CMD, "GETTIME",	G_NONE,		site_gettime,	TRUE,	FALSE},
   { 0, NULL }
 };
 
