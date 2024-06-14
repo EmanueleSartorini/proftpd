@@ -188,7 +188,7 @@ MODRET site_chgrp(cmd_rec *cmd) {
 
 /** CBL DTD STATUS command */
 MODRET site_status(cmd_rec *cmd) {
-  pr_response_add(R_200, _("CBL DTD STATUS command successful"));
+  pr_response_add(R_200, "0x%04x,0x%08x", 0x0000, 0x00001110);
   return PR_HANDLED(cmd);
 }
 
