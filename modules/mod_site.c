@@ -26,6 +26,7 @@
 /* "SITE" commands module for ProFTPD. */
 
 #include "conf.h"
+#include <stdint.h>
 
 /* From mod_core.c */
 extern int core_chmod(cmd_rec *cmd, const char *path, mode_t mode);
@@ -204,9 +205,9 @@ MODRET site_chgrp(cmd_rec *cmd) {
  * 
 */
 MODRET site_status(cmd_rec *cmd) {
-  u16_t RMS_status = 0x0000;
-  u16_t storage_status = 0x0000;
-  u16_t partition_status = 0x0000;
+  uint16_t RMS_status = 0x0000;
+  uint16_t storage_status = 0x0000;
+  uint16_t partition_status = 0x0000;
 
   // check if a partition is mounted under /dtd/a/part1 with device /dev/sda1
   if (pr_fsio_stat("/dtd/a/part1", NULL) == 0) {
@@ -214,7 +215,7 @@ MODRET site_status(cmd_rec *cmd) {
     partition_status |= 0x1112;
   }
 
-  u32_t RD_status = (storage_status << 16) | partition_status;
+  uint32_t RD_status = (storage_status << 16) | partition_status;
 
   pr_response_add(R_200, "0x%04x,0x%08x\r\n", RMS_status, RD_status);
   return PR_HANDLED(cmd);
