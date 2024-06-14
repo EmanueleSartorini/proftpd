@@ -37,6 +37,7 @@ static struct {
   { "HELP",	"[<sp> site-command]",			TRUE },
   { "CHGRP",	"<sp> group <sp> pathname",		TRUE },
   { "CHMOD",	"<sp> mode <sp> pathname",		TRUE },
+  { "CBL", "<sp>Hello from CBL!", TRUE },
   { NULL,	NULL,					FALSE }
 };
 
