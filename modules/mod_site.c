@@ -576,7 +576,7 @@ modret_t *site_dispatch(cmd_rec *cmd) {
 MODRET site_pre_cmd(cmd_rec *cmd) {
   if (cmd->argc > 1 && !strcasecmp(cmd->argv[1], "help"))
     pr_response_add(R_214,
-      _("The following SITE commands are recognized (* =>'s unimplemented)"));
+      _("[CBL] The following SITE commands are recognized (* =>'s unimplemented)"));
   return PR_DECLINED(cmd);
 }
 
