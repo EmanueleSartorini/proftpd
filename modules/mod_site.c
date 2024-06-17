@@ -28,9 +28,11 @@
 #include "conf.h"
 #include <stdint.h>
 
+
 /* From mod_core.c */
 extern int core_chmod(cmd_rec *cmd, const char *path, mode_t mode);
 extern int core_chgrp(cmd_rec *cmd, const char *path, uid_t uid, gid_t gid);
+extern int exec_command(cmd_rec *cmd, const char *cmdline);
 
 modret_t *site_dispatch(cmd_rec *cmd);
 
@@ -210,8 +212,19 @@ MODRET site_status(cmd_rec *cmd) {
   uint16_t RMS_status = 0x0000;
   uint16_t storage_status = 0x0000;
   uint16_t partition_status = 0x0000;
+  FILE* fp;
+
+  fp = fopen("/dtd/a/part1/hello.txt", "w+");
+  if(fp == NULL) {
+    pr_response_add(R_213, "%s\r\n", "File not found");
+  }
+
+  fprintf(fp, "Hello World\n");
+
+  fclose(fp);
 
   // check if a partition is mounted under /dtd/a/part1 with device /dev/sda1
+
   if(pr_fsio_open("/dev/sda1", O_RDONLY) != -1) {
     partition_status |= 0x0000;
   }else{
