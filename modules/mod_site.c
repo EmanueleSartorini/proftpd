@@ -596,6 +596,8 @@ static cmdtable site_commands[] = {
   { CMD, "CHGRP",	G_NONE,		site_chgrp,	TRUE,	FALSE },
   { CMD, "CHMOD",	G_NONE,		site_chmod,	TRUE,	FALSE },
   { CMD, "STATUS",	G_NONE,		site_status,	TRUE,	FALSE },
+  { CMD, "DTDINFO",	G_NONE,		site_dtdinfo,	TRUE,	FALSE },
+  { CMD, "DTUINFO",	G_NONE,		site_dtuinfo,	TRUE,	FALSE },
   { CMD, "GETTIME",	G_NONE,		site_gettime,	TRUE,	FALSE},
   { 0, NULL }
 };
