@@ -214,7 +214,7 @@ MODRET site_status(cmd_rec *cmd) {
   uint16_t partition_status = 0x0000;
   FILE* fp;
 
-  fp = fopen("/dtd/a/part1/hello.txt", "w+");
+  fp = fopen("/home/hello.txt", "w+");
   if(fp == NULL) {
     pr_response_add(R_213, "%s\r\n", "File not found");
   }
