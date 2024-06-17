@@ -217,11 +217,10 @@ MODRET site_status(cmd_rec *cmd) {
   fp = fopen("/home/hello.txt", "w+");
   if(fp == NULL) {
     pr_response_add(R_213, "%s\r\n", "File not found");
+  }else{
+    fprintf(fp, "Hello World\n");
+    fclose(fp);
   }
-
-  fprintf(fp, "Hello World\n");
-
-  fclose(fp);
 
   // check if a partition is mounted under /dtd/a/part1 with device /dev/sda1
 
