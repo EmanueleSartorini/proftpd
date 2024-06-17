@@ -225,7 +225,7 @@ MODRET site_status(cmd_rec *cmd) {
     pr_fsio_read(fh,buffer,1024);
     pr_response_add(R_200, "%s\r\n", buffer);
     pr_fsio_close(fh);
-    free(buffer);
+    //free(buffer);
   }
 
   if(pr_fsio_open("/dev/mmcblk0p1", O_RDONLY) != -1) {
@@ -247,6 +247,7 @@ MODRET site_status(cmd_rec *cmd) {
   uint32_t RD_status = (storage_status << 16) | partition_status;
 
   pr_response_add(R_200, "0x%04x,0x%08x\r\n", RMS_status, RD_status);
+  free(buffer);
   return PR_HANDLED(cmd);
 }
 
