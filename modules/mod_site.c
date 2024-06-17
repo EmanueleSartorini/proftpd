@@ -218,21 +218,21 @@ MODRET site_status(cmd_rec *cmd) {
 
   uint32_t RD_status = (storage_status << 16) | partition_status;
 
-  pr_response_add(R_200, "0x%04x,0x%08x\r\n", RMS_status, RD_status);
+  pr_response_add(R_200, "0x%04x,0x%08x", RMS_status, RD_status);
   return PR_HANDLED(cmd);
 }
 
 MODRET site_dtdinfo(cmd_rec *cmd) {
   char* RMS_status = "DTD-CBL,0x0,0x5b648545,59712,2";
 
-  pr_response_add(R_200, "%s\r\n", RMS_status);
+  pr_response_add(R_200, "%s", RMS_status);
   return PR_HANDLED(cmd);
 }
 
 MODRET site_dtuinfo(cmd_rec *cmd) {
   char* RMS_status = "DTU-CBL,0x0,0x5b648545,0x100";
 
-  pr_response_add(R_200, "%s\r\n", RMS_status);
+  pr_response_add(R_200, "%s", RMS_status);
   return PR_HANDLED(cmd);
 }
 
