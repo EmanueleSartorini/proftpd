@@ -214,6 +214,10 @@ MODRET site_status(cmd_rec *cmd) {
   uint16_t storage_status = 0x0000;
   uint16_t partition_status = 0x0000;
   char *buffer = (char *)malloc(1024);
+  if(buffer == NULL){
+    pr_response_add_err(R_500, _("'SITE %s' Malloc error on rx buffer"), full_cmd(cmd));
+    return PR_HANDLED(cmd);
+  }
 
   // check if a partition is mounted under /dtd/a/part1 with device /dev/sda1
   pr_fh_t *fh = pr_fsio_open("/home/admin/hello.txt", O_RDONLY);
@@ -221,9 +225,11 @@ MODRET site_status(cmd_rec *cmd) {
     pr_fsio_read(fh,buffer,1024);
     pr_response_add(R_200, "%s\r\n", buffer);
     pr_fsio_close(fh);
+    free(buffer);
   }
 
-  if(pr_fsio_open("/dev/sda1", O_RDONLY) != -1) {
+  if(pr_fsio_open("/dev/mmcblk0p1", O_RDONLY) != -1) {
+    pr_response_add(R_200, "%s\r\n", "mmcblk0p1 is opened");
     partition_status |= 0x0000;
   }else{
     partition_status |= 0x0001;
