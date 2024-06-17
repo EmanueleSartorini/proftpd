@@ -46,6 +46,8 @@ static struct {
   { "CHGRP",	"<sp> group <sp> pathname",		TRUE },
   { "CHMOD",	"<sp> mode <sp> pathname",		TRUE },
   { "STATUS", "", TRUE},
+  { "DTDINFO", "", TRUE},
+  { "DTUINFO", "", TRUE},
   { "GETTIME", "", TRUE},
   { NULL,	NULL,					FALSE }
 };
