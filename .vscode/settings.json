@@ -5,6 +5,11 @@
         "pr-syslog.h": "c",
         "dirtree.h": "c",
         "modules.h": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "version.h": "c",
+        "os.h": "c",
+        "mkhome.h": "c",
+        "libsupp.h": "c",
+        "fsio.h": "c"
     }
 }
