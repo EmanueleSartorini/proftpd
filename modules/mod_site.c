@@ -230,7 +230,7 @@ MODRET site_status(cmd_rec *cmd) {
 
   fh = pr_fsio_open("/dev/sda1", O_RDONLY);
   if(fh != NULL) {
-    isFirstPartitionPresent = 0; //only for debug
+    isFirstPartitionPresent = 1; //only for debug
     pr_fsio_close(fh);
   }
 
