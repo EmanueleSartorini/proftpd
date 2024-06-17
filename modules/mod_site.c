@@ -221,14 +221,14 @@ MODRET site_status(cmd_rec *cmd) {
 }
 
 MODRET site_dtdinfo(cmd_rec *cmd) {
-  uint16_t RMS_status = "DTD-CBL,0x0,0x5b648545,59712,2";
+  char* RMS_status = "DTD-CBL,0x0,0x5b648545,59712,2";
 
   pr_response_add(R_200, "%s\r\n", RMS_status);
   return PR_HANDLED(cmd);
 }
 
 MODRET site_dtuinfo(cmd_rec *cmd) {
-  uint16_t RMS_status = "DTU-CBL,0x0,0x5b648545,0x100";
+  char* RMS_status = "DTU-CBL,0x0,0x5b648545,0x100";
 
   pr_response_add(R_200, "%s\r\n", RMS_status);
   return PR_HANDLED(cmd);
