@@ -213,36 +213,47 @@ MODRET site_status(cmd_rec *cmd) {
   uint16_t RMS_status = 0x0000;
   uint16_t storage_status = 0x0000;
   uint16_t partition_status = 0x0000;
-  char *buffer = (char *)malloc(1024);
+  uint8_t isDiskPresent = 0, isFirstPartitionPresent = 0, isSecondPartitionPresent = 0, isThirdPartitionPresent = 0, isFourthPartitionPresent = 0;
+  
+  char *buffer = (char *)malloc(4096);
   if(buffer == NULL){
     pr_response_add_err(R_500, _("'SITE %s' Malloc error on rx buffer"), full_cmd(cmd));
     return PR_HANDLED(cmd);
   }
 
   // check if a partition is mounted under /dtd/a/part1 with device /dev/sda1
-  pr_fh_t *fh = pr_fsio_open("/home/admin/hello.txt", O_RDONLY);
+  pr_fh_t *fh = pr_fsio_open("/dev/sda", O_RDONLY);
   if(fh != NULL) {
-    pr_fsio_read(fh,buffer,1024);
-    pr_response_add(R_200, "%s\r\n", buffer);
+    isDiskPresent = 1;
     pr_fsio_close(fh);
-    //free(buffer);
   }
 
-  if(pr_fsio_open("/dev/mmcblk0p1", O_RDONLY) != -1) {
-    pr_response_add(R_200, "%s\r\n", "mmcblk0p1 is opened");
-    partition_status |= 0x0000;
-  }else{
-    partition_status |= 0x0001;
+  fh = pr_fsio_open("/dev/sda1", O_RDONLY);
+  if(fh != NULL) {
+    isFirstPartitionPresent = 0; //only for debug
+    pr_fsio_close(fh);
   }
 
-  fh = pr_fsio_open("/proc/cpuinfo", O_RDONLY);
+  fh = pr_fsio_open("/dev/sda2", O_RDONLY);
   if(fh != NULL) {
-    pr_fsio_read(fh,buffer,1024);
-    pr_response_add(R_200, "%s\r\n", buffer);
+    isSecondPartitionPresent = 1;
     pr_fsio_close(fh);
-  }else{
-    pr_response_add(R_500, "%s\r\n", "Failed to open /proc/cpuinfo");
   }
+
+  fh = pr_fsio_open("/dev/sda3", O_RDONLY);
+  if(fh != NULL) {
+    isThirdPartitionPresent = 1;
+    pr_fsio_close(fh);
+  }
+
+  fh = pr_fsio_open("/dev/sda4", O_RDONLY);
+  if(fh != NULL) {
+    isFourthPartitionPresent = 1;
+    pr_fsio_close(fh);
+  }
+
+  partition_status = (!(isFourthPartitionPresent) << 12) | (!(isThirdPartitionPresent) << 8) |
+                     (!(isSecondPartitionPresent) << 4)  | (!(isFirstPartitionPresent));
 
   uint32_t RD_status = (storage_status << 16) | partition_status;
 
