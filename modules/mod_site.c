@@ -235,22 +235,13 @@ MODRET site_status(cmd_rec *cmd) {
     partition_status |= 0x0001;
   }
 
-  if(pr_fsio_open("/dev/sda2", O_RDONLY) != -1) {
-    partition_status |= 0x0000;
+  fh = pr_fsio_open("/proc/cpuinfo", O_RDONLY);
+  if(fh != NULL) {
+    pr_fsio_read(fh,buffer,1024);
+    pr_response_add(R_200, "%s\r\n", buffer);
+    pr_fsio_close(fh);
   }else{
-    partition_status |= 0x0010;
-  }
-
-  if(pr_fsio_open("/dev/sda3", O_RDONLY) != -1) {
-    partition_status |= 0x0000;
-  }else{
-    partition_status |= 0x0100;
-  }
-
-  if(pr_fsio_open("/dev/sda4", O_RDONLY) != -1) {
-    partition_status |= 0x0000;
-  }else{
-    partition_status |= 0x1000;
+    pr_response_add(R_500, "%s\r\n", "Failed to open /proc/cpuinfo");
   }
 
   uint32_t RD_status = (storage_status << 16) | partition_status;
