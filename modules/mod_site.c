@@ -213,7 +213,7 @@ MODRET site_dtdhealth(cmd_rec *cmd) {
       return PR_HANDLED(cmd);
     }
 
-    pr_response_add(R_200, "0x0000,0x%04x", ((uint16_t *)buffer)[0]);
+    pr_response_add(R_200, "Read:%d ---> 0x0000,0x%04x", read,((uint16_t *)buffer)[0]);
     pr_fsio_close(fh);
     free(buffer);
     return PR_HANDLED(cmd);
