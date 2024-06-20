@@ -213,6 +213,7 @@ MODRET site_dtdhealth(cmd_rec *cmd) {
     }
 
     pr_response_add(R_200, "0x0000,0x%04x", ((uint16_t *)buffer)[0]);
+    return PR_HANDLED(cmd);
 }
 
 /** CBL DTD STATUS command 
