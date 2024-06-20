@@ -193,7 +193,7 @@ MODRET site_chgrp(cmd_rec *cmd) {
 }
 
 MODRET site_dtdhealth(cmd_rec *cmd) {
-   pr_fh_t *fh = pr_fsio_open("/dev/dtdhealth", O_RDONLY);
+  /* pr_fh_t *fh = pr_fsio_open("/dev/dtdhealth", O_RDONLY);
     if(fh == NULL) {
       pr_response_add_err(R_500, _("'SITE %s' failed to open /dev/dtdhealth"), full_cmd(cmd));
       return PR_HANDLED(cmd);
@@ -215,7 +215,8 @@ MODRET site_dtdhealth(cmd_rec *cmd) {
     pr_response_add(R_200, "Read:%d ---> 0x0000,0x%04x", read,0x1024);
     //pr_response_add(R_200, "Read:%d ---> 0x0000,0x%04x", read,((uint16_t *)buffer)[0]);
     pr_fsio_close(fh);
-    free(buffer);
+    free(buffer);*/
+    pr_response_add(R_200, "0x0000,0x1024");
     return PR_HANDLED(cmd);
 }
 
