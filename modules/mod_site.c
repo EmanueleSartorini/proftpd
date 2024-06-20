@@ -195,19 +195,19 @@ MODRET site_chgrp(cmd_rec *cmd) {
 MODRET site_dtdhealth(cmd_rec *cmd) {
     pr_fh_t *fh = pr_fsio_open("/dev/dtdhealth", O_RDONLY);
     if(fh == NULL) {
-      pr_response_add(R_500, _("'SITE %s' failed to open /dev/dtdhealth"), strerror(xerrno));
+      pr_response_add(R_500, _("'SITE %s' failed to open /dev/dtdhealth"), full_cmd(cmd));
       return PR_HANDLED(cmd);
     }
 
     char *buffer = (char *)malloc(6);
     if(buffer == NULL){
-      pr_response_add(R_500, _("'SITE %s' Malloc error on rx buffer"), strerror(xerrno));
+      pr_response_add(R_500, _("'SITE %s' Malloc error on rx buffer"), full_cmd(cmd));
       return PR_HANDLED(cmd);
     }
 
     int read = pr_fsio_read(fh, buffer, 6);
     if(read < 0) {
-      pr_response_add(R_500, _("'SITE %s' failed to read /dev/dtdhealth"), strerror(xerrno));
+      pr_response_add(R_500, _("'SITE %s' failed to read /dev/dtdhealth"), full_cmd(cmd));
       pr_fsio_close(fh);
       free(buffer);
       return PR_HANDLED(cmd);
