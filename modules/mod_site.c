@@ -214,6 +214,8 @@ MODRET site_dtdhealth(cmd_rec *cmd) {
     }
 
     pr_response_add(R_200, "0x0000,0x%04x", ((uint16_t *)buffer)[0]);
+    pr_fsio_close(fh);
+    free(buffer);
     return PR_HANDLED(cmd);
 }
 
@@ -256,7 +258,7 @@ MODRET site_status(cmd_rec *cmd) {
 
   fh = pr_fsio_open("/dev/sda1", O_RDONLY);
   if(fh != NULL) {
-    isFirstPartitionPresent = 1; //only for debug
+    isFirstPartitionPresent = 1;
     pr_fsio_close(fh);
   }
 
@@ -283,7 +285,7 @@ MODRET site_status(cmd_rec *cmd) {
 
   uint32_t RD_status = (storage_status << 16) | partition_status;
 
-  pr_response_add(R_200, "0x%04x,0x%08x\r\n", RMS_status, RD_status);
+  pr_response_add(R_200, "0x%04x,0x%08x", RMS_status, RD_status);
   free(buffer);
   return PR_HANDLED(cmd);
 }
