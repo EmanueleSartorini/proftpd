@@ -47,6 +47,7 @@ static struct {
   { "CHMOD",	"<sp> mode <sp> pathname",		TRUE },
   { "STATUS", "", TRUE},
   { "GETTIME", "", TRUE},
+  { "DTDHEALTH", "", TRUE},
   { NULL,	NULL,					FALSE }
 };
 
@@ -650,6 +651,7 @@ static cmdtable site_commands[] = {
   { CMD, "CHMOD",	G_NONE,		site_chmod,	TRUE,	FALSE },
   { CMD, "STATUS",	G_NONE,		site_status,	TRUE,	FALSE },
   { CMD, "GETTIME",	G_NONE,		site_gettime,	TRUE,	FALSE},
+  { CMD, "DTDHEALTH",	G_NONE,		site_dtdhealth,	TRUE,	FALSE},
   { 0, NULL }
 };
 
