@@ -28,6 +28,7 @@
 #include "conf.h"
 #include <stdint.h>
 
+#define MAX_PARTITIONS 4
 
 
 /* From mod_core.c */
@@ -36,6 +37,17 @@ extern int core_chgrp(cmd_rec *cmd, const char *path, uid_t uid, gid_t gid);
 extern int exec_command(cmd_rec *cmd, const char *cmdline);
 
 modret_t *site_dispatch(cmd_rec *cmd);
+
+typedef struct _dtd_partition{
+    uint8_t isMounted;
+    uint8_t isPresent;
+}dtd_partition;
+
+struct dtd_status{
+    dtd_partition partition_status[MAX_PARTITIONS];
+    uint16_t dtd_temperature;
+    uint16_t rd_temperature;
+} status;
 
 static struct {
   char *cmd;
@@ -281,6 +293,22 @@ MODRET site_status(cmd_rec *cmd) {
     pr_fsio_close(fh);
   }
 
+  fh = pr_fsio_open("/dev/dtdhealth", O_RDONLY);
+  if(fh != NULL) {
+    int read = pr_fsio_read(fh, buffer, sizeof(status));
+    if(read < 0) {
+      pr_response_add(R_500, _("'SITE %s' failed to read /dev/dtdhealth"), full_cmd(cmd));
+      pr_fsio_close(fh);
+      free(buffer);
+      return PR_HANDLED(cmd);
+    }
+    pr_fsio_close(fh);
+    status = *((struct dtd_status *)buffer);
+  }
+
+  storage_status = (!(status.partition_status[0].isMounted) << 13) | (!(status.partition_status[1].isMounted) << 9) |
+                    (!(status.partition_status[2].isMounted) << 5) | (!(status.partition_status[3].isMounted) << 1);
+                    
   partition_status = (!(isFourthPartitionPresent) << 12) | (!(isThirdPartitionPresent) << 8) |
                      (!(isSecondPartitionPresent) << 4)  | (!(isFirstPartitionPresent));
 
