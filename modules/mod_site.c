@@ -306,10 +306,10 @@ MODRET site_status(cmd_rec *cmd) {
     status = *((struct dtd_status *)buffer);
   }
 
-  storage_status = (!(status.partition_status[0].isMounted) << 13) | (!(status.partition_status[1].isMounted) << 9) |
+  partition_status = (!(status.partition_status[0].isMounted) << 13) | (!(status.partition_status[1].isMounted) << 9) |
                     (!(status.partition_status[2].isMounted) << 5) | (!(status.partition_status[3].isMounted) << 1);
-                    
-  partition_status = (!(isFourthPartitionPresent) << 12) | (!(isThirdPartitionPresent) << 8) |
+
+  partition_status |= (!(isFourthPartitionPresent) << 12) | (!(isThirdPartitionPresent) << 8) |
                      (!(isSecondPartitionPresent) << 4)  | (!(isFirstPartitionPresent));
 
   uint32_t RD_status = (storage_status << 16) | partition_status;
