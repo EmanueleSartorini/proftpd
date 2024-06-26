@@ -307,13 +307,13 @@ MODRET site_status(cmd_rec *cmd) {
     dtd_word = *((DTD_Word_t *)buffer);
   }
 
-  partition_status = (!(status.partition_status[0].isMounted) << 13) | (!(status.partition_status[1].isMounted) << 9) |
+ /*partition_status = (!(status.partition_status[0].isMounted) << 13) | (!(status.partition_status[1].isMounted) << 9) |
                     (!(status.partition_status[2].isMounted) << 5) | (!(status.partition_status[3].isMounted) << 1);
 
   partition_status |= (!(isFourthPartitionPresent) << 12) | (!(isThirdPartitionPresent) << 8) |
                      (!(isSecondPartitionPresent) << 4)  | (!(isFirstPartitionPresent));
 
-  uint32_t RD_status = (storage_status << 16) | partition_status;
+  uint32_t RD_status = (storage_status << 16) | partition_status;*/
 
   pr_response_add(R_200, "0x%04x,0x%08x", dtd_word.word1, (uint32_t)(dtd_word.word2 << 8) | dtd_word.word3);
   free(buffer);
