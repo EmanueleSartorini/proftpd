@@ -43,11 +43,11 @@ typedef struct _dtd_partition{
     uint8_t isPresent;
 }dtd_partition;
 
-struct dtd_status{
-    dtd_partition partition_status[MAX_PARTITIONS];
-    uint16_t dtd_temperature;
-    uint16_t rd_temperature;
-} status;
+typedef struct _DTD_Word_t{
+    uint16_t word1;
+    uint16_t word2;
+    uint16_t word3;
+}DTD_Word_t;
 
 static struct {
   char *cmd;
@@ -254,6 +254,7 @@ MODRET site_status(cmd_rec *cmd) {
   uint16_t RMS_status = 0x0000;
   uint16_t storage_status = 0x0000;
   uint16_t partition_status = 0x0000;
+  DTD_Word_t dtd_word;
   uint8_t isDiskPresent = 0, isFirstPartitionPresent = 0, isSecondPartitionPresent = 0, isThirdPartitionPresent = 0, isFourthPartitionPresent = 0;
   
   char *buffer = (char *)malloc(4096);
@@ -295,7 +296,7 @@ MODRET site_status(cmd_rec *cmd) {
 
   fh = pr_fsio_open("/dev/dtdhealth", O_RDONLY);
   if(fh != NULL) {
-    int read = pr_fsio_read(fh, buffer, sizeof(status));
+    int read = pr_fsio_read(fh, buffer, sizeof(DTD_Word_t));
     if(read < 0) {
       pr_response_add(R_500, _("'SITE %s' failed to read /dev/dtdhealth"), full_cmd(cmd));
       pr_fsio_close(fh);
@@ -303,7 +304,7 @@ MODRET site_status(cmd_rec *cmd) {
       return PR_HANDLED(cmd);
     }
     pr_fsio_close(fh);
-    status = *((struct dtd_status *)buffer);
+    dtd_word = *((DTD_Word_t *)buffer);
   }
 
   partition_status = (!(status.partition_status[0].isMounted) << 13) | (!(status.partition_status[1].isMounted) << 9) |
@@ -314,7 +315,7 @@ MODRET site_status(cmd_rec *cmd) {
 
   uint32_t RD_status = (storage_status << 16) | partition_status;
 
-  pr_response_add(R_200, "0x%04x,0x%08x", RMS_status, RD_status);
+  pr_response_add(R_200, "0x%04x,0x%08x", dtd_word.word1, (uint32_t)(dtd_word.word2 << 8) | dtd_word.word3);
   free(buffer);
   return PR_HANDLED(cmd);
 }
