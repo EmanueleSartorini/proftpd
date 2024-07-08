@@ -58,6 +58,8 @@ static struct {
   { "CHGRP",	"<sp> group <sp> pathname",		TRUE },
   { "CHMOD",	"<sp> mode <sp> pathname",		TRUE },
   { "STATUS", "", TRUE},
+  { "DTDINFO", "", TRUE},
+  { "DTUINFO", "", TRUE},
   { "GETTIME", "", TRUE},
   { "DTDHEALTH", "", TRUE},
   { NULL,	NULL,					FALSE }
@@ -231,6 +233,21 @@ MODRET site_dtdhealth(cmd_rec *cmd) {
     pr_response_add(R_200, "0x0000,0x1024");
     return PR_HANDLED(cmd);
 }
+
+MODRET site_dtdinfo(cmd_rec *cmd) {
+  char* RMS_status = "DTD-CBL,0x0,0x5b648545,59712,2";
+
+  pr_response_add(R_200, "%s", RMS_status);
+  return PR_HANDLED(cmd);
+}
+
+MODRET site_dtuinfo(cmd_rec *cmd) {
+  char* RMS_status = "DTU-CBL,0x0,0x5b648545,0x100";
+
+  pr_response_add(R_200, "%s", RMS_status);
+  return PR_HANDLED(cmd);
+}
+
 
 /** CBL DTD STATUS command 
  * Return the status of the RMS and RD
@@ -683,6 +700,8 @@ static cmdtable site_commands[] = {
   { CMD, "CHMOD",	G_NONE,		site_chmod,	TRUE,	FALSE },
   { CMD, "STATUS",	G_NONE,		site_status,	TRUE,	FALSE },
   { CMD, "GETTIME",	G_NONE,		site_gettime,	TRUE,	FALSE},
+  { CMD, "DTDINFO",	G_NONE,		site_dtdinfo,	TRUE,	FALSE},
+  { CMD, "DTUINFO",	G_NONE,		site_dtuinfo,	TRUE,	FALSE},
   { CMD, "DTDHEALTH",	G_NONE,		site_dtdhealth,	TRUE,	FALSE},
   { 0, NULL }
 };
