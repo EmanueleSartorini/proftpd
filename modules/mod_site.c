@@ -747,6 +747,7 @@ static cmdtable site_commands[] = {
   { CMD, "DTDINFO",	G_NONE,		site_dtdinfo,	TRUE,	FALSE},
   { CMD, "DTUINFO",	G_NONE,		site_dtuinfo,	TRUE,	FALSE},
   { CMD, "DTDHEALTH",	G_NONE,		site_dtdhealth,	TRUE,	FALSE},
+  { CMD, "ERASE",	G_NONE,		site_secure_erase,	TRUE,	FALSE},
   { 0, NULL }
 };
 
