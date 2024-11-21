@@ -29,7 +29,7 @@
 #include <stdint.h>
 
 #define MAX_PARTITIONS 4
-
+#define DO_SECURE_ERASE_CMD 106
 
 /* From mod_core.c */
 extern int core_chmod(cmd_rec *cmd, const char *path, mode_t mode);
@@ -49,6 +49,7 @@ typedef struct _DTD_Word_t{
     uint16_t word3;
     uint16_t dtd_temperature;
     uint16_t rd_temperature;
+    uint8_t secure_erase_status;
 }DTD_Word_t;
 
 static struct {
@@ -64,6 +65,7 @@ static struct {
   { "DTUINFO", "", TRUE},
   { "GETTIME", "", TRUE},
   { "DTDHEALTH", "", TRUE},
+  { "ERASE", "", TRUE},
   { NULL,	NULL,					FALSE }
 };
 
@@ -246,6 +248,50 @@ MODRET site_dtuinfo(cmd_rec *cmd) {
   return PR_HANDLED(cmd);
 }
 
+MODRET site_secure_erase(cmd_rec *cmd){
+  char* buffer = (char *)malloc(3);
+  if(buffer == NULL){
+    pr_response_add_err(R_500, _("'SITE %s' Malloc error on rx buffer"), full_cmd(cmd));
+    return PR_HANDLED(cmd);
+  }
+  pr_fh_t *fh = pr_fsio_open("/dev/dtdhealth", O_WRONLY);
+  if(fh != NULL) {
+    buffer[0] = DO_SECURE_ERASE_CMD;
+    buffer[1] = 1;
+    buffer[2] = 0;
+    int write = pr_fsio_write(fh, buffer, 3);
+    if(write < 0) {
+      pr_response_add(R_500, _("'SITE %s' failed to write /dev/dtdhealth"), full_cmd(cmd));
+      pr_fsio_close(fh);
+      free(buffer);
+      return PR_HANDLED(cmd);
+    }
+    free(buffer);
+    pr_fsio_close(fh);
+  }
+
+  DTD_Word_t* dtd_word = (DTD_Word_t *)malloc(sizeof(DTD_Word_t));
+  fh = pr_fsio_open("/dev/dtdhealth", O_RDONLY);
+  if(fh != NULL) {
+    int read = pr_fsio_read(fh, dtd_word, sizeof(DTD_Word_t));
+    if(read < 0) {
+      pr_response_add(R_500, _("'SITE %s' failed to read /dev/dtdhealth"), full_cmd(cmd));
+      pr_fsio_close(fh);
+      free(buffer);
+      return PR_HANDLED(cmd);
+    }
+    pr_fsio_close(fh);
+
+    if(dtd_word->secure_erase_status == 0){
+      pr_response_add(R_500, "Secure erase command failed");
+      return PR_HANDLED(cmd);
+    }else{
+      pr_response_add(R_200, "Secure erase command sent");
+    }
+  }
+  return PR_HANDLED(cmd);
+}
+
 
 /** CBL DTD STATUS command 
  * Return the status of the RMS and RD
@@ -278,7 +324,7 @@ MODRET site_status(cmd_rec *cmd) {
     return PR_HANDLED(cmd);
   }
 
-  // check if a partition is mounted under /dtd/a/part1 with device /dev/sda1
+/*  // check if a partition is mounted under /dtd/a/part1 with device /dev/sda1
   pr_fh_t *fh = pr_fsio_open("/dev/sda", O_RDONLY);
   if(fh != NULL) {
     isDiskPresent = 1;
@@ -307,9 +353,9 @@ MODRET site_status(cmd_rec *cmd) {
   if(fh != NULL) {
     isFourthPartitionPresent = 1;
     pr_fsio_close(fh);
-  }
+  }*/
 
-  fh = pr_fsio_open("/dev/dtdhealth", O_RDONLY);
+  pr_fh_t *fh = pr_fsio_open("/dev/dtdhealth", O_RDONLY);
   if(fh != NULL) {
     int read = pr_fsio_read(fh, buffer, sizeof(DTD_Word_t));
     if(read < 0) {
