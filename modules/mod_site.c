@@ -376,7 +376,19 @@ MODRET site_status(cmd_rec *cmd) {
 
   uint32_t RD_status = (storage_status << 16) | partition_status;*/
 
-  pr_response_add(R_200, "0x%04x,0x%08x", dtd_word.word1, (uint32_t)(dtd_word.word2 << 16) | dtd_word.word3);
+  if(dtd_word.word3 & 0x0F == 0x00){
+    //4 bits LSB. Refer to partition 1. The partition is present and mounted
+    pr_response_add(200, "0x%04x,0x%08x", dtd_word.word1, (uint32_t)(dtd_word.word2 << 16) | dtd_word.word3);
+  }else if((dtd_word.word3 & 0x0F) == 0x02){
+    //4 bits LSB. Refer to partition 1. The partition is present but not mounted
+    pr_response_add(202, "0x%04x,0x%08x", dtd_word.word1, (uint32_t)(dtd_word.word2 << 16) | dtd_word.word3);
+  }else if((dtd_word.word3 & 0x0F) == 0x03){
+    //4 bits LSB. Refer to partition 1. The partition is not present
+    pr_response_add(201, "0x%04x,0x%08x", dtd_word.word1, (uint32_t)(dtd_word.word2 << 16) | dtd_word.word3);
+  }else{
+    pr_response_add(500, "0x%04x,0x%08x", dtd_word.word1, (uint32_t)(dtd_word.word2 << 16) | dtd_word.word3);
+  }
+
   free(buffer);
   return PR_HANDLED(cmd);
 }
